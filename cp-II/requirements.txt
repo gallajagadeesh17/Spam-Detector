@@ -1,0 +1,9 @@
+flask
+flask-cors
+gunicorn
+scikit-learn
+joblib
+authlib
+google-auth
+requests
+Werkzeug
