@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text">
+                <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <h2>Login</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" required>
+                <div style="text-align: right; margin-top: 5px;">
+                    <a href="{{ url_for('forgot_password') }}" style="font-size: 0.8rem; color: #2563eb; text-decoration: none; font-weight: 600;">Forgot Password?</a>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+        
+        <div class="social-login" style="margin-top: 25px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 15px;">Or continue with</p>
+            
+            <a href="{{ url_for('google_login_authlib') }}" style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                background: white;
+                color: #1e293b;
+                text-decoration: none;
+                font-weight: 600;
+                margin-top: 10px;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#94a3b8'" 
+               onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#cbd5e1'">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" style="width: 22px;">
+                Sign in with Google
+            </a>
+        </div>
+
+        <div class="auth-footer">
+            Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a>
+        </div>
+    </div>
+<script>
+window.addEventListener("load", function() {
+    setTimeout(() => {
+        document.getElementById("loader-wrapper").classList.add("loader-hidden");
+    }, 600);
+});
+</script>
+</body>
+</html>

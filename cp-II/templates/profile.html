@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo" style="font-size: 1.5rem; text-align: center; margin: 10px 0;">
+            <span style="color: white; font-weight: 900; letter-spacing: -1px;">SPAM</span>
+            <span style="color: #10b981; font-weight: 900; letter-spacing: -1px;">DETECTOR</span>
+        </div>
+    </div>
+
+    <div class="sidebar-user" style="padding: 20px; border-bottom: 1px solid #334155;">
+        <div class="user-text-only">
+            <p style="margin: 0; font-size: 0.7rem; color: #94a3b8 !important; font-weight: bold; letter-spacing: 1.5px;">
+                HELLO,
+            </p>
+            <p style="margin: 0; color: #ffffff !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase;">
+                {{ session.get('user_name', 'GUEST') }}
+            </p>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}" class="nav-link">
+            <i class="fas fa-home"></i> <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('profile') }}" class="nav-link active">
+            <i class="fas fa-user-circle"></i> <span>Profile</span>
+        </a>
+        <a href="{{ url_for('history') }}" class="nav-link">
+            <i class="fas fa-history"></i> <span>History</span>
+        </a>
+    </div>
+
+    <div class="sidebar-footer" style="margin-top: auto; padding: 20px;">
+        <a href="{{ url_for('logout') }}" class="logout-btn" style="background: #ef4444; color: white; border-radius: 8px; text-align: center; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 600;">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+    </div>
+</nav>
+
+<div id="loader-wrapper">
+    <div class="loader-container">
+        <div class="cyber-spinner"></div>
+        <div class="loading-text">
+            <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+        </div>
+    </div>
+</div>
+
+    <main class="main-content">
+        <style>
+            /* Force the main content area to be white */
+            body, .main-content {
+                background-color: #ffffff !important;
+                color: #1e293b !important;
+            }
+        
+            /* Style the central settings card */
+            .settings-card {
+                background-color: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+                color: #1e293b !important;
+                padding: 40px;
+                border-radius: 12px;
+            }
+        
+            /* Ensure labels and text are dark for readability */
+            h2, p, label {
+                color: #0f172a !important;
+            }
+        
+            .text-muted {
+                color: #64748b !important;
+            }
+        
+            /* Style the input fields to look professional on white */
+            .form-control {
+                background-color: #f8fafc !important;
+                border: 1px solid #cbd5e1 !important;
+                color: #0f172a !important;
+            }
+        
+            .form-control[readonly] {
+                background-color: #f1f5f9 !important;
+            }
+        </style>
+        
+        <div class="profile-wrapper container-fluid">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} fade-in-out text-center mx-auto" style="max-width: 800px; margin-bottom: 20px; border-radius: 8px;">
+                      <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>
+                      {{ message }}
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <div class="profile-card" style="background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden; max-width: 900px; margin: 0 auto;">
+                
+                <div style="background: #1e293b; padding: 20px 40px; color: white;">
+                    <h3 style="margin: 0; font-weight: 700; color: white !important;">Account Settings</h3>
+                    <p style="margin: 0; font-size: 0.85rem; color: #94a3b8 !important;">Manage your verified professional identity</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px; align-items: start;">
+                    
+                    <div style="text-align: center; border-right: 1px solid #f1f5f9; padding-right: 20px;">
+                        <div style="position: relative; width: 160px; height: 160px; margin: 0 auto 20px;">
+                            <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; border: 4px solid #3b82f6; padding: 3px; background: #0f172a; display: flex; align-items: center; justify-content: center;">
+                                {% set pic = user['profile_pic'] %}
+                                {% if pic and pic != 'default.png' and pic != 'default_user.png' %}
+                                    {% if pic.startswith('http') %}
+                                        <img src="{{ pic }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" referrerpolicy="no-referrer">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='profile_pics/' + pic) }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                    {% endif %}
+                                {% else %}
+                                    {% set name = session.get('user_name') or user['username'] or user['full_name'] or user['email'] %}
+                                    <div class="avatar-initial" style="width: 100%; height: 100%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 64px; color: white; background: linear-gradient(135deg, #6366f1, #22c55e);">
+                                        {{ name[0]|upper }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div style="position: absolute; bottom: 5px; right: 5px; background: #3b82f6; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; pointer-events: none;">
+                                <i class="fas fa-camera" style="color: white; font-size: 0.9rem;"></i>
+                            </div>
+                        </div>
+                        
+                        <form action="{{ url_for('upload_profile_pic') }}" method="post" enctype="multipart/form-data">
+                            <label for="upload_photo" style="background: transparent; border: 1px solid #cbd5e1; padding: 8px 15px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; color: #64748b; font-weight: 600; display: inline-block; transition: background 0.3s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                Update Photo
+                            </label>
+                            <input type="file" id="upload_photo" name="file" style="display: none;" onchange="this.form.submit()">
+                        </form>
+                        
+                        <div style="margin-top: 30px; text-align: left; background: #f8fafc; padding: 15px; border-radius: 12px;">
+                            <p style="font-size: 0.75rem; color: #94a3b8; font-weight: bold; margin-bottom: 5px;">ACCOUNT STATUS</p>
+                            <span style="color: #3b82f6; font-weight: bold; font-size: 0.9rem;"><i class="fas fa-check-circle"></i> Verified Profile</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <form action="{{ url_for('update_profile') }}" method="post">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px;">EMAIL ADDRESS</label>
+                                    <input type="text" value="{{ user['email'] }}" disabled style="width: 100%; padding: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; color: #94a3b8; font-family: 'Inter', sans-serif;">
+                                </div>
+                                <div class="form-group">
+                                    <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px;">USER ID</label>
+                                    <input type="text" name="username" value="{{ user['username'] or '' }}" disabled style="width: 100%; padding: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; color: #94a3b8; font-family: 'Inter', sans-serif;">
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px;">DATE OF BIRTH</label>
+                                    <input type="date" name="dob" value="{{ user['dob'] or '' }}" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: 'Inter', sans-serif;">
+                                </div>
+                                <div class="form-group">
+                                    <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px;">GENDER</label>
+                                    <select name="gender" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: white; font-family: 'Inter', sans-serif;">
+                                        <option value="Male" {% if user['gender'] == 'Male' %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if user['gender'] == 'Female' %}selected{% endif %}>Female</option>
+                                        <option value="Other" {% if user['gender'] == 'Other' %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 30px;">
+                                <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px;">LOCATION</label>
+                                <input type="text" name="location" value="{{ user['location'] or '' }}" placeholder="e.g. Andhra Pradesh, India" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: 'Inter', sans-serif;">
+                            </div>
+
+                            <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                                <a href="{{ url_for('dashboard') }}" style="padding: 12px 30px; background: transparent; border: 1px solid #cbd5e1; color: #64748b; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; display: flex; align-items: center;">Cancel</a>
+                                <button type="submit" style="padding: 12px 30px; background: #3b82f6; border: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); transition: 0.3s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-vault-card" style="background: white; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; margin-top: 30px;">
+                <div style="background: #1e293b; padding: 20px 30px; color: white; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: rgba(59, 130, 246, 0.2); padding: 10px; border-radius: 10px;">
+                            <i class="fas fa-shield-alt" style="color: #3b82f6; font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.1rem; font-weight: 700;">Security Credentials</h4>
+                            <p style="margin: 0; font-size: 0.75rem; color: #94a3b8;">Protect your account with a strong password</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-lock-open" style="color: #475569; font-size: 1.2rem;"></i>
+                </div>
+
+                <form action="{{ url_for('change_password') }}" method="POST" style="margin: 0;">
+                    <div style="padding: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
+                        <div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px; text-transform: uppercase;">Current Password</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-key" style="position: absolute; left: 12px; top: 13px; color: #94a3b8;"></i>
+                                    <input type="password" name="current_password" required placeholder="••••••••" style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; transition: 0.3s; font-family: 'Inter', sans-serif; letter-spacing: 2px;">
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px; text-transform: uppercase;">New Secure Password</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-lock" style="position: absolute; left: 12px; top: 13px; color: #94a3b8;"></i>
+                                    <input type="password" name="new_password" id="newPass" required placeholder="••••••••" style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: 'Inter', sans-serif; letter-spacing: 2px;">
+                                </div>
+                                <div style="margin-top: 10px; height: 4px; background: #f1f5f9; border-radius: 2px;">
+                                    <div id="strengthBar" style="width: 0%; height: 100%; background: #ef4444; border-radius: 2px; transition: 0.5s;"></div>
+                                </div>
+                                <p style="font-size: 0.7rem; color: #94a3b8; margin-top: 5px;">Strength: <span id="strengthText" style="font-weight: bold;">None</span></p>
+                            </div>
+
+                            <div style="margin-bottom: 25px;">
+                                <label style="display: block; font-size: 0.75rem; color: #64748b; font-weight: 800; margin-bottom: 8px; text-transform: uppercase;">Confirm New Password</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-check-double" style="position: absolute; left: 12px; top: 13px; color: #94a3b8;"></i>
+                                    <input type="password" name="confirm_password" required placeholder="••••••••" style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: 'Inter', sans-serif; letter-spacing: 2px;">
+                                </div>
+                            </div>
+
+                            <button type="submit" style="width: 100%; background: #3b82f6; color: white; padding: 14px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                                <i class="fas fa-sync-alt"></i> Update Security Vault
+                            </button>
+                        </div>
+
+                        <div style="background: #f8fafc; border-radius: 12px; padding: 20px; border: 1px dashed #cbd5e1; height: fit-content;">
+                            <h5 style="color: #1e293b; margin-top: 0; font-size: 0.9rem;">Pro Tips:</h5>
+                            <ul style="padding: 0; list-style: none; font-size: 0.8rem; color: #64748b;">
+                                <li style="margin-bottom: 12px; display: flex; gap: 10px;"><i class="fas fa-check-circle" style="color: #3b82f6;"></i> Min. 8 characters</li>
+                                <li style="margin-bottom: 12px; display: flex; gap: 10px;"><i class="fas fa-check-circle" style="color: #3b82f6;"></i> Include special signs (!@#)</li>
+                                <li style="margin-bottom: 12px; display: flex; gap: 10px;"><i class="fas fa-check-circle" style="color: #3b82f6;"></i> Don't use your username</li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+<script>
+function generateColor(name) {
+    const colors = [
+        ["#6366f1", "#22c55e"],
+        ["#3b82f6", "#06b6d4"],
+        ["#f59e0b", "#ef4444"],
+        ["#8b5cf6", "#ec4899"],
+        ["#10b981", "#14b8a6"]
+    ];
+
+    let index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+}
+
+window.onload = function () {
+    const avatar = document.getElementById("avatarInitial");
+    if (avatar) {
+        const name = avatar.innerText.trim();
+        const [c1, c2] = generateColor(name);
+
+        avatar.style.background = `linear-gradient(135deg, ${c1}, ${c2})`;
+    }
+};
+</script>
+<script>
+window.addEventListener("load", function() {
+    setTimeout(() => {
+        document.getElementById("loader-wrapper").classList.add("loader-hidden");
+    }, 600);
+});
+
+// Interactive Password Strength Meter
+document.addEventListener('DOMContentLoaded', function() {
+    const newPass = document.getElementById('newPass');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    
+    if(newPass && strengthBar && strengthText) {
+        newPass.addEventListener('input', function(e) {
+            let val = e.target.value;
+            let strength = 0;
+            
+            if (val.length >= 8) strength += 1;
+            if (/[A-Z]/.test(val)) strength += 1;
+            if (/[0-9]/.test(val)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(val)) strength += 1;
+
+            if (val.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthText.innerText = 'None';
+                strengthText.style.color = '#94a3b8';
+            } else if (strength <= 1) {
+                strengthBar.style.width = '30%';
+                strengthBar.style.background = '#ef4444';
+                strengthText.innerText = 'Weak';
+                strengthText.style.color = '#ef4444';
+            } else if (strength <= 3) {
+                strengthBar.style.width = '60%';
+                strengthBar.style.background = '#f59e0b';
+                strengthText.innerText = 'Good';
+                strengthText.style.color = '#f59e0b';
+            } else {
+                strengthBar.style.width = '100%';
+                strengthBar.style.background = '#10b981';
+                strengthText.innerText = 'Strong';
+                strengthText.style.color = '#10b981';
+            }
+        });
+    }
+});
+
+// Auto-dismiss flash messages after 4 seconds
+setTimeout(function() {
+    let alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        alert.style.transition = "opacity 0.5s ease";
+        alert.style.opacity = "0";
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 4000);
+</script>
+</body>
+</html>
