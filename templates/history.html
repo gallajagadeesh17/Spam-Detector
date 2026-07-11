@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo" style="font-size: 1.5rem; text-align: center; margin: 10px 0;">
+                <span style="color: white; font-weight: 900; letter-spacing: -1px;">SPAM</span>
+                <span style="color: #10b981; font-weight: 900; letter-spacing: -1px;">DETECTOR</span>
+            </div>
+        </div>
+
+        <div class="sidebar-user" style="padding: 20px; border-bottom: 1px solid #334155;">
+            <div class="user-text-only">
+                <p style="margin: 0; font-size: 0.7rem; color: #94a3b8 !important; font-weight: bold; letter-spacing: 1.5px;">
+                    HELLO,
+                </p>
+                <p style="margin: 0; color: #ffffff !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase;">
+                    {{ session.get('user_name', 'GUEST') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <i class="fas fa-home"></i> <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('profile') }}" class="nav-link">
+                <i class="fas fa-user-circle"></i> <span>Profile</span>
+            </a>
+            <a href="{{ url_for('history') }}" class="nav-link active">
+                <i class="fas fa-history"></i> <span>History</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer" style="margin-top: auto; padding: 20px;">
+            <a href="{{ url_for('logout') }}" class="logout-btn" style="background: #ef4444; color: white; border-radius: 8px; text-align: center; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text">
+                <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <header>
+            <h2>My Scan History</h2>
+        </header>
+
+        <div class="container-fluid">
+            
+            <div class="email-section" style="margin-top: 0;">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Email Content</th>
+                                <th>Result</th>
+                                <th>Confidence</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    <tbody>
+                        {% for row in history %}
+                        <tr>
+                            <td>{{ row['timestamp'] }}</td>
+                            <td>{{ row['content'][:50] }}...</td>
+                            <td>
+                                {% if row['result'] == 'Spam Detected' %}
+                                    <span class="status-icon spam" title="Spam Detected">
+                                        <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> 
+                                        <span class="status-text" style="color: #ef4444; font-weight: bold;">Spam</span>
+                                    </span>
+                                {% else %}
+                                    <span class="status-icon safe" title="Safe Email">
+                                        <i class="fas fa-shield-alt" style="color: #22c55e;"></i> 
+                                        <span class="status-text" style="color: #22c55e; font-weight: bold;">Safe</span>
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center;">
+                                <span class="confidence-score confidence-{{ 'high' if row['score'] > 50 else 'low' }}">
+                                    {{ row['score'] }}%
+                                </span>
+                            </td>
+                            <td style="display: flex; gap: 15px;">
+                                <a href="#" class="delete-history-link" data-record-id="{{ row['id'] }}" style="color: #ef4444;">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+    document.querySelectorAll(".delete-history-link").forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault();
+            deleteRecord(this.dataset.recordId);
+        });
+    });
+
+    function deleteRecord(id) {
+        if (confirm("Are you sure you want to delete this record?")) {
+            fetch(`/delete_history/${id}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Instantly remove the row from the screen
+                    location.reload(); 
+                } else {
+                    alert("Failed to delete record.");
+                }
+            });
+        }
+    }
+    </script>
+    <script>
+    window.addEventListener("load", function() {
+        setTimeout(() => {
+            document.getElementById("loader-wrapper").classList.add("loader-hidden");
+        }, 600);
+    });
+    </script>
+</body>
+</html>

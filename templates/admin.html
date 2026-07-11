@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="dashboard-page">
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo" style="font-size: 1.5rem; text-align: center; margin: 10px 0;">
+                {% if session.get('role') == 'admin' %}
+                    <span style="color: white; font-weight: 900; letter-spacing: -1px;">ADMIN</span>
+                    <span style="color: #10b981; font-weight: 900; letter-spacing: -1px;">PANEL</span>
+                {% else %}
+                    <span style="color: white; font-weight: 900; letter-spacing: -1px;">SPAM</span>
+                    <span style="color: #10b981; font-weight: 900; letter-spacing: -1px;">DETECTOR</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="admin-profile-section" style="padding: 20px; border-bottom: 1px solid #334155;">
+            <p style="margin: 0; font-size: 0.7rem; color: #94a3b8 !important; font-weight: bold; letter-spacing: 1.5px;">HELLO,</p>
+            <p style="margin: 0; color: #ffffff !important; font-weight: 800; font-size: 1.2rem; text-transform: uppercase;">{{ session.get('user_name', 'ADMIN') }}</p>
+        </div>
+        
+        <div class="sidebar-menu">
+            {% if session.get('role') == 'admin' %}
+                <a href="{{ url_for('admin') }}" class="nav-link active">
+                    <i class="fas fa-chart-line"></i> <span>Overview</span>
+                </a>
+                <a href="{{ url_for('global_history') }}" class="nav-link">
+                    <i class="fas fa-globe"></i> <span>Global History</span>
+                </a>
+                <a href="{{ url_for('admin_profile') }}" class="nav-link">
+                    <i class="fas fa-user-shield"></i> <span>Admin Profile</span>
+                </a>
+            {% else %}
+                <a href="{{ url_for('dashboard') }}" class="nav-link">
+                    <i class="fas fa-home"></i> <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('profile') }}" class="nav-link">
+                    <i class="fas fa-user-circle"></i> <span>Profile</span>
+                </a>
+                <a href="{{ url_for('history') }}" class="nav-link">
+                    <i class="fas fa-history"></i> <span>History</span>
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="sidebar-footer" style="margin-top: auto; padding: 20px;">
+            <a href="{{ url_for('logout') }}" class="nav-link" style="background: #ef4444; color: white; border-radius: 8px; text-align: center; padding: 12px; display: block; text-decoration: none; font-weight: 600;">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
+    </nav>
+
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text">
+                <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <header>
+            <h2>System Statistics</h2>
+            
+        </header>
+
+        <div class="container-fluid">
+            
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                
+                <div class="stat-card">
+                    <div>
+                        <h3>{{ total_users }}</h3>
+                        <p>Registered Users</p>
+                    </div>
+                    <i class="fas fa-users fa-2x" style="color: #3498db;"></i>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <h3>{{ spam_rate }}%</h3>
+                        <p>Spam Rate</p>
+                    </div>
+                    <i class="fas fa-percent fa-2x" style="color: #9b59b6;"></i>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <h3>{{ total_scans }}</h3>
+                        <p>Total Scans</p>
+                    </div>
+                    <i class="fas fa-envelope fa-2x" style="color: var(--primary-color);"></i>
+                </div>
+
+                <div class="stat-card">
+                    <div>
+                        <h3 style="color: #e74c3c;">{{ total_spam }}</h3>
+                        <p>Threats Detected</p>
+                    </div>
+                    <i class="fas fa-shield-alt fa-2x" style="color: #e74c3c;"></i>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 30px; border-radius: 12px; min-height: 600px; margin-bottom: 2rem;">
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h3 style="color: #1e293b; margin-bottom: 20px;">Overall System Threat Level</h3>
+                    <div style="width: 300px; height: 300px; margin: 0 auto;">
+                        <canvas id="systemPieChart"></canvas>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; border-top: 2px solid #f1f5f9; padding-top: 20px;">
+                    <h3 style="color: #1e293b; font-size: 1.1rem; margin-bottom: 20px;">USER RISK ASSESSMENT</h3>
+                    
+                    {% for user in user_breakdown %}
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                        <div>
+                            <strong style="color: #0f172a; font-size: 1rem;">{{ user.name }}</strong>
+                            <p style="margin: 0; font-size: 0.8rem; color: #64748b;">Total Email Scans: {{ user.scans }}</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="text-align: right;">
+                                <span style="font-size: 1.3rem; font-weight: 800; color: {% if user.percent > 50 %}#ef4444{% else %}#22c55e{% endif %};">
+                                    {{ user.percent }}%
+                                </span>
+                                <p style="margin: 0; font-size: 0.6rem; color: #94a3b8; font-weight: bold; text-transform: uppercase;">Spam Threat</p>
+                            </div>
+                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user? This will also remove their history.');" style="margin: 0;">
+                                <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 5px; font-size: 1.1rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'" title="Delete User">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <script>
+                const ctx = document.getElementById('systemPieChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Total Spam', 'Total Safe'],
+                        datasets: [{
+                            data: [{{ total_spam }}, {{ total_safe }}],
+                            backgroundColor: ['#ef4444', '#22c55e'],
+                            borderWidth: 5,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            </script>
+
+            
+        </div>
+    </main>
+    <script>
+    window.addEventListener("load", function() {
+        setTimeout(() => {
+            document.getElementById("loader-wrapper").classList.add("loader-hidden");
+        }, 600);
+    });
+    </script>
+</body>
+</html>

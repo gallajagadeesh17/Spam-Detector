@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spam Detector | AI-Powered Security</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+body {
+  background: #000;
+  color: white;
+  font-family: sans-serif;
+}
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Reveal animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(80px);
+  transition: all 1s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Floating animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Glow background */
+.glow {
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  background: rgba(59,130,246,0.15);
+  filter: blur(160px);
+  border-radius: 50%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+
+.floating-icon {
+  animation: float 6s ease-in-out infinite;
+}
+
+.hero-bg {
+    position: relative;
+    background: radial-gradient(circle at 20% 30%, rgba(59,130,246,0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(99,102,241,0.15), transparent 40%),
+                linear-gradient(to bottom, #000000, #050b1a);
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+.animate-scan {
+    position: absolute;
+    animation: scan 4s linear infinite;
+}
+</style>
+</head>
+
+<body>
+<div class="absolute top-[40px] left-[5%] z-50">
+    <h1 class="text-2xl font-black tracking-tighter uppercase">
+        SPAM <span class="text-emerald-500">DETECTOR</span>
+    </h1>
+</div>
+
+<div class="absolute top-[40px] right-[5%] z-50 flex gap-4">
+    <a href="{{ url_for('login') }}" class="border border-white px-6 py-2 rounded-full font-bold hover:bg-white hover:text-indigo-900 transition duration-300">Login</a>
+    <a href="{{ url_for('signup') }}" class="bg-blue-600 px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition duration-300">Get Started</a>
+</div>
+
+<section class="relative py-56 px-6">
+
+<div class="glow"></div>
+
+<div class="max-w-6xl mx-auto">
+
+<h2 class="text-6xl md:text-8xl font-black mb-6 tracking-tight text-center reveal">
+    THE ULTIMATE <br>
+    <span class="text-emerald-500">SPAM DETECTOR.</span>
+</h2>
+
+<p class="mt-8 text-[1.3rem] text-gray-400 max-w-[700px] mx-auto text-center reveal">
+Spam Detector doesn’t just filter emails.  
+It understands intent, detects deception, and eliminates phishing threats in real-time — powered by advanced local AI.
+</p>
+
+<div class="mt-10 flex justify-center gap-5 flex-wrap reveal mb-32">
+    <a href="{{ url_for('signup') }}" class="px-[30px] py-[14px] bg-blue-500 border-none rounded-[40px] text-white font-semibold hover:bg-blue-600 transition">
+        Secure My Inbox
+    </a>
+    <a href="#pipeline" class="px-[30px] py-[14px] border border-blue-500 bg-transparent rounded-[40px] text-blue-500 font-semibold hover:bg-blue-500 hover:text-white transition">
+        See How It Works
+    </a>
+</div>
+
+</div>
+</section>
+
+<section id="pipeline" class="py-24 px-6 bg-black">
+    <div class="max-w-5xl mx-auto">
+        <div class="text-center mb-16 reveal">
+            <h2 class="text-4xl md:text-5xl font-bold">The AI <span class="text-emerald-500">Pipeline</span></h2>
+            <p class="text-gray-400 mt-4">Witness the millisecond journey of a data packet through our neural network.</p>
+        </div>
+
+        <div class="relative">
+            <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-emerald-500/0 via-emerald-500 to-emerald-500/0 hidden md:block"></div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between mb-20 reveal">
+                <div class="md:w-5/12 text-right hidden md:block">
+                    <h3 class="text-2xl font-bold text-white">Data Ingestion</h3>
+                    <p class="text-gray-400 mt-2">Secure entry of text or files into our encrypted sandbox environment.</p>
+                </div>
+                <div class="z-10 w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+                    <i class="fas fa-file-import text-2xl"></i>
+                </div>
+                <div class="md:w-5/12 mt-4 md:mt-0 md:hidden">
+                    <h3 class="text-xl font-bold text-white">Data Ingestion</h3>
+                    <p class="text-gray-400">Secure entry into our encrypted sandbox.</p>
+                </div>
+                <div class="md:w-5/12 hidden md:block"></div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between mb-20 reveal">
+                <div class="md:w-5/12 hidden md:block"></div>
+                <div class="z-10 w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(59,130,246,0.4)]">
+                    <i class="fas fa-project-diagram text-2xl"></i>
+                </div>
+                <div class="md:w-5/12 md:pl-12">
+                    <h3 class="text-2xl font-bold text-white">Vectorization</h3>
+                    <p class="text-gray-400 mt-2">Text is tokenized and transformed into mathematical vectors for the AI to interpret.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between mb-20 reveal">
+                <div class="md:w-5/12 text-right hidden md:block">
+                    <h3 class="text-2xl font-bold text-white">Bayesian Analysis</h3>
+                    <p class="text-gray-400 mt-2">Applying Multinomial Naive Bayes to calculate threat probabilities across millions of variables.</p>
+                </div>
+                <div class="z-10 w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(147,51,234,0.4)]">
+                    <i class="fas fa-brain text-2xl"></i>
+                </div>
+                <div class="md:w-5/12 mt-4 md:mt-0 md:hidden text-left">
+                    <h3 class="text-xl font-bold text-white">Bayesian Analysis</h3>
+                </div>
+                <div class="md:w-5/12 hidden md:block"></div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between reveal">
+                <div class="md:w-5/12 hidden md:block"></div>
+                <div class="z-10 w-16 h-16 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+                    <i class="fas fa-check-double text-2xl"></i>
+                </div>
+                <div class="md:w-5/12 md:pl-12">
+                    <h3 class="text-2xl font-bold text-white">Instant Verdict</h3>
+                    <p class="text-gray-400 mt-2">The final score is delivered. Flagged as Spam or verified as Safe in under 500ms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-24 px-6 bg-[#050b1a] text-white">
+  <div class="max-w-4xl mx-auto space-y-6">
+    <h2 class="text-4xl font-bold text-center mb-12 reveal">How It Works</h2>
+    
+    <!-- Step 1 -->
+    <div class="flex items-center gap-6 p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-300 reveal">
+      <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+        1
+      </div>
+      <div class="flex-shrink-0 text-emerald-400">
+        <!-- Shield Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold text-white">Secure Registration</h4>
+        <p class="text-gray-400 text-sm">Encrypted account creation with salt-hashed security.</p>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="flex items-center gap-6 p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-300 reveal">
+      <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+        2
+      </div>
+      <div class="flex-shrink-0 text-emerald-400">
+        <!-- Upload Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold text-white">Submit Content</h4>
+        <p class="text-gray-400 text-sm">Upload or paste suspicious text into the neural scanner.</p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="flex items-center gap-6 p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-300 reveal">
+      <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+        3
+      </div>
+      <div class="flex-shrink-0 text-emerald-400">
+        <!-- Cpu Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2" ry="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold text-white">AI Intelligence Scan</h4>
+        <p class="text-gray-400 text-sm">Multinomial Naive Bayes analysis in real-time.</p>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="flex items-center gap-6 p-6 bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 hover:border-emerald-500/50 transition-all duration-300 reveal">
+      <div class="flex-shrink-0 w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-xl font-bold text-white">
+        4
+      </div>
+      <div class="flex-shrink-0 text-emerald-400">
+        <!-- CheckCircle Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+      </div>
+      <div>
+        <h4 class="text-xl font-bold text-white">Instant Verdict</h4>
+        <p class="text-gray-400 text-sm">Receive your Spam Threat % and clear recommendations.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="py-24 px-6 relative overflow-hidden">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
+        <div class="md:w-1/2 reveal">
+            <span class="text-emerald-500 font-bold tracking-widest uppercase text-sm">The Science</span>
+            <h2 class="text-4xl md:text-5xl font-bold mt-4 mb-6">How our Brain <br><span class="text-emerald-500">Classifies</span> Threats.</h2>
+            <p class="text-gray-400 leading-relaxed mb-6">
+                Unlike basic filters that just look for "bad words," Spam Guard AI uses a <strong>Multinomial Naive Bayes</strong> classifier. It calculates the mathematical probability of every word's relationship to the next.
+            </p>
+            <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                    <span><strong>Tokenization:</strong> Breaking text into unique neural markers.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                    <span><strong>Frequency Analysis:</strong> Weighing the rarity of phrases.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                    <span><strong>Bayesian Inference:</strong> Finalizing a threat score based on learned patterns.</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="md:w-1/2 relative reveal">
+            <div class="absolute inset-0 bg-emerald-500/20 blur-[100px] rounded-full"></div>
+            <div class="relative glass-card p-8 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md">
+                <pre class="text-xs text-emerald-400 font-mono">
+{
+  "algorithm": "MultinomialNB",
+  "status": "Scanning...",
+  "probability_map": {
+    "urgent": 0.89,
+    "winner": 0.94,
+    "bank": 0.72
+  },
+  "verdict": "SPAM_DETECTED"
+}
+                </pre>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="ai-lab" class="py-32 bg-black relative overflow-hidden">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/10 blur-[150px]"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 blur-[150px]"></div>
+
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-20 reveal">
+            <h2 class="text-5xl md:text-6xl font-black tracking-tighter">DECONSTRUCTING <span class="text-emerald-500">THREATS.</span></h2>
+            <p class="text-gray-500 mt-4 text-lg">Watch how our engine strips away deception to find the truth.</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-12 items-center">
+            
+            <div class="lg:w-7/12 w-full reveal">
+                <div class="relative p-1 rounded-3xl bg-gradient-to-b from-white/10 to-transparent">
+                    <div class="bg-[#0a0a0a] rounded-[22px] p-8 border border-white/5 relative overflow-hidden">
+                        
+                        <div class="absolute inset-x-0 h-px bg-emerald-500/50 shadow-[0_0_15px_emerald] top-0 animate-scan"></div>
+
+                        <div class="space-y-6 font-mono text-sm leading-relaxed">
+                            <div class="flex gap-4 border-b border-white/5 pb-4">
+                                <span class="text-gray-600">FROM:</span>
+                                <span class="text-red-400">security-alert-392@unknown-node.net</span>
+                            </div>
+                            <div class="text-gray-300">
+                                Subject: <span class="bg-red-500/20 text-red-400 px-1">URGENT:</span> Your account access is limited.
+                            </div>
+                            <p class="text-gray-500">
+                                Dear User, we noticed a <span class="text-emerald-400 border-b border-emerald-500/30">suspicious login</span> from Russia. 
+                                Please <span class="bg-emerald-500/20 text-emerald-400 px-1 animate-pulse italic">click here</span> to verify your 
+                                <span class="text-emerald-400 border-b border-emerald-500/30">credentials</span> immediately or your 
+                                <span class="text-red-400 underline decoration-wavy">bank access</span> will be revoked.
+                            </p>
+                        </div>
+
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <span class="text-[10px] bg-white/5 border border-white/10 px-3 py-1 rounded-full text-gray-400 uppercase tracking-widest">Syntax Analysis</span>
+                            <span class="text-[10px] bg-white/5 border border-white/10 px-3 py-1 rounded-full text-gray-400 uppercase tracking-widest">Sentiment Weighting</span>
+                            <span class="text-[10px] bg-emerald-500/20 border border-emerald-500/50 px-3 py-1 rounded-full text-emerald-400 uppercase tracking-widest font-bold">Pattern Matched</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-5/12 space-y-12 reveal">
+                
+                <div class="group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded">PHASE 01</span>
+                        <h4 class="text-xl font-bold text-white group-hover:text-emerald-500 transition-colors">Semantic Tokenization</h4>
+                    </div>
+                    <p class="text-gray-500 leading-relaxed">
+                        The raw text is broken down into individual <strong>tokens</strong>. Our engine strips out "Stop Words" and punctuation to isolate the core keywords that indicate spam intent.
+                    </p>
+                </div>
+                
+                <div class="h-px bg-gradient-to-r from-white/10 to-transparent"></div>
+            
+                <div class="group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded">PHASE 02</span>
+                        <h4 class="text-xl font-bold text-white group-hover:text-blue-500 transition-colors">Feature Vectorization</h4>
+                    </div>
+                    <p class="text-gray-500 leading-relaxed">
+                        Using <strong>CountVectorizer</strong>, we convert the text tokens into a numerical matrix. This transforms language into a mathematical format the AI can calculate.
+                    </p>
+                </div>
+            
+                <div class="h-px bg-gradient-to-r from-white/10 to-transparent"></div>
+            
+                <div class="group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-xs font-bold text-purple-500 bg-purple-500/10 px-2 py-1 rounded">PHASE 03</span>
+                        <h4 class="text-xl font-bold text-white group-hover:text-purple-500 transition-colors">Bayesian Inference</h4>
+                    </div>
+                    <p class="text-gray-500 leading-relaxed">
+                        The <strong>Multinomial Naive Bayes</strong> model calculates the probability of spam based on learned patterns from thousands of previous threats.
+                    </p>
+                    <div class="mt-4 py-2 px-4 bg-emerald-500/10 border border-emerald-500/20 inline-block rounded-lg text-emerald-500 font-mono font-bold text-sm">
+                        STATUS: SCAN_COMPLETE [97.4% ACCURACY]
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="threat-info-section" style="padding: 80px 20px; background: #0f172a; color: white;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 60px; align-items: center;">
+        
+        <div style="position: relative; text-align: center;">
+            <div style="
+                width: 250px; 
+                height: 250px; 
+                border: 15px solid #3b82f6; 
+                border-radius: 50%; 
+                margin: 0 auto; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center;
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            ">
+                <h2 style="font-size: 3.5rem; margin: 0; color: #ffffff;">84%</h2>
+                <p style="margin: 0; font-weight: 700; color: #3b82f6; letter-spacing: 2px;">THREAT LEVEL</p>
+            </div>
+            <div style="
+                position: absolute; 
+                top: -10px; left: 50%; 
+                transform: translateX(-50%);
+                width: 270px; height: 270px; 
+                border: 2px dashed rgba(255,255,255,0.2); 
+                border-radius: 50%;
+                animation: spin-threat 10s linear infinite;
+            "></div>
+        </div>
+
+        <div>
+            <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 20px;">Real-Time <span style="color: #3b82f6;">Threat Scoring</span></h2>
+            <p style="color: #94a3b8; line-height: 1.8; font-size: 1.1rem; margin-bottom: 30px;">
+                Our advanced AI doesn't just say "Spam" or "Not Spam." It calculates a precise <strong>Threat Score</strong> based on 50+ markers including phishing patterns, suspicious links, and linguistic anomalies.
+            </p>
+            
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-shield-alt" style="color: #3b82f6;"></i>
+                    <span><strong>0-30%:</strong> Verified Safe Content</span>
+                </li>
+                <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-exclamation-triangle" style="color: #fbbf24;"></i>
+                    <span><strong>31-70%:</strong> Suspicious (Proceed with Caution)</span>
+                </li>
+                <li style="margin-bottom: 15px; display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-skull-crossbones" style="color: #ef4444;"></i>
+                    <span><strong>71-100%:</strong> High Risk (Malicious Detected)</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes spin-threat { 100% { transform: translateX(-50%) rotate(360deg); } }
+</style>
+
+<section id="metrics" class="performance-metrics-section py-12 bg-white/5 border-y border-white/10 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="reveal">
+            <h3 class="text-4xl font-black text-emerald-500 counter" data-target="99.2" data-suffix="%">0%</h3>
+            <p class="text-gray-400 text-sm uppercase tracking-widest mt-2 font-bold">Accuracy Rate</p>
+        </div>
+        <div class="reveal">
+            <h3 class="text-4xl font-black text-blue-500 counter" data-target="1.2" data-suffix="M+">0M+</h3>
+            <p class="text-gray-400 text-sm uppercase tracking-widest mt-2 font-bold">Threats Blocked</p>
+        </div>
+        <div class="reveal">
+            <h3 class="text-4xl font-black text-purple-500 counter" data-target="500" data-suffix="ms">0ms</h3>
+            <p class="text-gray-400 text-sm uppercase tracking-widest mt-2 font-bold">Analysis Speed</p>
+        </div>
+        <div class="reveal">
+            <h3 class="text-4xl font-black text-emerald-500 counter" data-target="24" data-prefix="" data-suffix="/7">0/7</h3>
+            <p class="text-gray-400 text-sm uppercase tracking-widest mt-2 font-bold">Live Monitoring</p>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="relative overflow-hidden bg-gradient-to-br from-[#4F46E5] to-[#06B6D4] text-white py-[180px] px-[5%] text-center">
+
+    <!-- LEFT TOP ICON -->
+
+    <div class="relative z-10 max-w-[800px] mx-auto">
+        <h2 class="text-[3.2rem] font-bold mb-[30px]">
+            Ready to Secure Your Inbox?
+        </h2>
+        <p class="opacity-95 mb-[50px] text-[1.2rem]">
+            Experience AI-powered spam detection running entirely on your local infrastructure.
+        </p>
+        <a href="{{ url_for('signup') }}" class="inline-block bg-white text-[#4F46E5] py-[18px] px-[50px] rounded-[60px] font-bold no-underline transition duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.2)] hover:shadow-xl hover:-translate-y-1">
+            Get Started Today
+        </a>
+    </div>
+</section>
+
+<script>
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.reveal').forEach(el => {
+  observer.observe(el);
+});
+
+// Counter animation
+const metricsSection = document.querySelector('.performance-metrics-section');
+if (metricsSection) {
+  const animateCounters = () => {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200; // Higher is slower
+
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText.replace(/[^\d.-]/g, '') || 0;
+        const increment = target / speed;
+
+        if (count < target) {
+          let newCount = count + increment;
+          if (newCount > target) newCount = target;
+
+          let displayValue;
+          if (target.toString().includes('.')) {
+            displayValue = newCount.toFixed(1);
+          } else {
+            displayValue = Math.ceil(newCount);
+          }
+
+          const prefix = counter.getAttribute('data-prefix') || '';
+          const suffix = counter.getAttribute('data-suffix') || '';
+          counter.innerText = prefix + displayValue + suffix;
+
+          setTimeout(updateCount, 10);
+        } else {
+          const prefix = counter.getAttribute('data-prefix') || '';
+          const suffix = counter.getAttribute('data-suffix') || '';
+          counter.innerText = prefix + target + suffix;
+        }
+      };
+      updateCount();
+    });
+  };
+
+  const counterObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounters();
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  counterObserver.observe(metricsSection);
+}
+</script>
+
+</body>
+</html>

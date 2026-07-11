@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box; /* This is the most important line */
+        }
+
+        body, html {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* This hard-kills the scroll bar */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8fafc !important;
+            background-image: none !important; /* Overrides the default .auth-page background */
+        }
+
+        .signup-wrapper {
+            display: flex;
+            width: 90%;
+            max-width: 1000px;
+            height: 80vh; /* Keeps the box height safe within the window */
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="auth-page">
+
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text">
+                <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="signup-card">
+        <h2 style="margin-bottom: 5px; text-align: center; color: #0f172a; font-weight: 700;">Create Account</h2>
+        <p style="color: #64748b; font-size: 0.85rem; text-align: center; margin-bottom: 20px;">Join our spam protection network.</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('signup') }}" method="POST">
+            <div style="margin-bottom: 12px; text-align: left;">
+                <label for="fullname" style="font-size: 0.8rem; font-weight: 600; color: #1e293b; display: block; margin-bottom: 5px;">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required 
+                       minlength="3" maxlength="20" placeholder="3-20 characters" 
+                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; outline: none;">
+            </div>
+
+            <div style="margin-bottom: 12px; text-align: left;">
+                <label for="email" style="font-size: 0.8rem; font-weight: 600; color: #1e293b; display: block; margin-bottom: 5px;">Email Address</label>
+                <input type="email" id="email" name="email" required 
+                       placeholder="example@gmail.com" 
+                       pattern=".+@gmail\.com"
+                       title="Please use a valid @gmail.com address"
+                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; outline: none;">
+                <small style="color: #666; font-size: 0.7rem; display: block; margin-top: 3px;">Only @gmail.com is allowed.</small>
+            </div>
+            
+            <div style="margin-bottom: 12px; text-align: left;">
+                <label for="password" style="font-size: 0.8rem; font-weight: 600; color: #1e293b; display: block; margin-bottom: 5px;">Password</label>
+                <input type="password" id="password" name="password_field" placeholder="Enter Password" required 
+                       pattern="^[A-Z][a-z0-9@.,]*[0-9@.,][a-zA-Z0-9@.,]*$"
+                       title="Must start with a Capital letter, include numbers and @ , or ."
+                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; outline: none;">
+                
+                <div style="margin-top: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span id="strength-text" style="font-size: 0.75rem; font-weight: 700; color: #64748b;">STRENGTH: NONE</span>
+                        <span id="strength-percent" style="font-size: 0.75rem; color: #94a3b8;">0%</span>
+                    </div>
+                    <div style="height: 6px; width: 100%; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+                        <div id="strength-bar" style="height: 100%; width: 0%; background: #ef4444; transition: 0.4s all ease;"></div>
+                    </div>
+                </div>
+                
+                <small style="color: #64748b; font-size: 0.75rem; display: block; margin-top: 8px;">
+                    Ex: Abc@123 (Starts with Capital, contains @ and numbers)
+                </small>
+            </div>
+
+            <div style="margin-bottom: 12px; text-align: left;">
+                <label for="confirm_password" style="font-size: 0.8rem; font-weight: 600; color: #1e293b; display: block; margin-bottom: 5px;">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required placeholder="Re-enter password" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; outline: none;">
+            </div>
+            
+            <button type="submit" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 700; margin-top: 10px; cursor: pointer; transition: background 0.3s;" onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='#3b82f6'">
+                Sign Up
+            </button>
+            
+            <div class="social-login" style="margin-top: 20px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 10px; margin-top: 0;">Or continue with</p>
+                
+                <a href="{{ url_for('google_login_authlib') }}" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    background: white;
+                    color: #1e293b;
+                    text-decoration: none;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    font-size: 0.9rem;
+                " onmouseover="this.style.backgroundColor='#f8fafc'; this.style.borderColor='#94a3b8'" 
+                   onmouseout="this.style.backgroundColor='white'; this.style.borderColor='#cbd5e1'">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="Google" style="width: 20px;">
+                    Sign up with Google
+                </a>
+            </div>
+
+        </form>
+
+        <div style="text-align: center; margin-top: 15px; font-size: 0.85rem; color: #64748b;">
+            Already have an account? <a href="{{ url_for('login') }}" style="color: #3b82f6; font-weight: 600; text-decoration: none;">Login here</a>
+        </div>
+    </div>
+
+<script>
+window.addEventListener("load", function() {
+    setTimeout(() => {
+        document.getElementById("loader-wrapper").classList.add("loader-hidden");
+    }, 600);
+
+    // Password Strength Meter Logic
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const bar = document.getElementById('strength-bar');
+    const text = document.getElementById('strength-text');
+    const percent = document.getElementById('strength-percent');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function validateForm() {
+            const val = password.value;
+            let score = 0;
+
+            if (val.length > 0) {
+                // Rule 1: Starts with Capital Letter
+                if (/^[A-Z]/.test(val)) score += 25;
+                
+                // Rule 2: Contains lowercase letters
+                if (/[a-z]/.test(val)) score += 25;
+                
+                // Rule 3: Contains at least one number
+                if (/[0-9]/.test(val)) score += 25;
+                
+                // Rule 4: Contains special characters @ , or .
+                if (/[@.,]/.test(val)) score += 25;
+            }
+
+            // Update Bar Width and Color
+            bar.style.width = score + "%";
+            percent.innerText = score + "%";
+
+            if (score <= 25) {
+                bar.style.background = "#ef4444"; // Red (Weak)
+                text.innerText = "STRENGTH: WEAK";
+                text.style.color = "#ef4444";
+            } else if (score <= 75) {
+                bar.style.background = "#fbbf24"; // Yellow (Medium)
+                text.innerText = "STRENGTH: MEDIUM";
+                text.style.color = "#fbbf24";
+            } else {
+                bar.style.background = "#3b82f6"; // Blue (Strong)
+                text.innerText = "STRENGTH: STRONG (READY)";
+                text.style.color = "#3b82f6";
+            }
+
+            // Check if passwords match
+            const isMatch = (val === confirmPassword.value) && val.length > 0;
+            
+            if (confirmPassword.value.length > 0) {
+                confirmPassword.style.borderColor = isMatch ? "#10b981" : "#ef4444";
+                confirmPassword.style.borderWidth = "2px";
+            } else {
+                confirmPassword.style.borderColor = "#e2e8f0";
+                confirmPassword.style.borderWidth = "1px";
+            }
+
+            if (submitBtn) {
+                if (score === 100 && isMatch) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.background = "#3b82f6"; // Electric Blue
+                    submitBtn.style.cursor = "pointer";
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.style.background = "#cbd5e1"; // Greyed out
+                    submitBtn.style.cursor = "not-allowed";
+                }
+            }
+    }
+
+    if (password && confirmPassword && bar && text && percent) {
+        password.addEventListener('input', validateForm);
+        confirmPassword.addEventListener('input', validateForm);
+    }
+});
+</script>
+</body>
+</html>

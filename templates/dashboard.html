@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+
+<nav class="sidebar">
+   <div class="sidebar-header">
+        <div class="logo" style="font-size: 1.5rem; text-align: center; margin: 10px 0;">
+            <span style="color: white; font-weight: 900; letter-spacing: -1px;">SPAM</span>
+            <span style="color: #10b981; font-weight: 900; letter-spacing: -1px;">DETECTOR</span>
+        </div>
+    </div>
+
+    <div class="sidebar-user" style="padding: 20px; border-bottom: 1px solid #334155;">
+        <div class="user-text-only">
+            <p style="margin: 0; font-size: 0.7rem; color: #94a3b8 !important; font-weight: bold; letter-spacing: 1.5px;">
+                HELLO,
+            </p>
+            <p style="margin: 0; color: #ffffff !important; font-weight: 700; font-size: 1.1rem; text-transform: uppercase;">
+                {{ session.get('user_name', 'GUEST') }}
+            </p>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}" class="nav-link active">
+            <i class="fas fa-home"></i> <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('profile') }}" class="nav-link">
+            <i class="fas fa-user-circle"></i> <span>Profile</span>
+        </a>
+        <a href="{{ url_for('history') }}" class="nav-link">
+            <i class="fas fa-history"></i> <span>History</span>
+        </a>
+    </div>
+    <div class="sidebar-footer" style="margin-top: auto; padding: 20px;">
+        <a href="{{ url_for('logout') }}" class="nav-link" style="background: #ef4444; color: white; border-radius: 8px; text-align: center; padding: 12px; display: block; text-decoration: none; font-weight: 600;">
+            <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </a>
+    </div>
+</nav>
+
+<div id="loader-wrapper">
+    <div class="loader-container">
+        <div class="cyber-spinner"></div>
+        <div class="loading-text">
+            <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+        </div>
+    </div>
+</div>
+
+    <main class="main-content">
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: white; border-bottom: 1px solid #e2e8f0;">
+    <h2 style="margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;">User Dashboard</h2>
+    
+    <div class="profile-menu-container" style="position: relative; display: flex; align-items: center; gap: 15px;">
+        <div class="header-user" style="display: flex; align-items: center; gap: 10px;">
+            <div class="user-info">
+                <p class="user-name">Hello  {{ user['full_name'] }}</p>
+                <p class="user-status"><i class="fas fa-circle" style="color: #10b981; font-size: 8px;"></i> Active Now</p>
+            </div>
+            
+            <div class="user-profile-avatar" onclick="toggleProfileMenu()" style="cursor: pointer; width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #10b981; background: #0f172a; display: flex; align-items: center; justify-content: center; padding: 6px;">
+                {% set pic = user['profile_pic'] %}
+                
+                {% if pic and pic != 'default.png' and pic != 'default_user.png' %}
+                    {% if pic.startswith('http') %}
+                        <img src="{{ pic }}" style="width: 100%; height: 100%; object-fit: cover;" referrerpolicy="no-referrer">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='profile_pics/' + pic) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% endif %}
+                {% else %}
+                    {% set name = session.get('user_name') or user['username'] or user['full_name'] or user['email'] %}
+                    <div class="avatar-initial">
+                        {{ name[0]|upper }}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="profileDropdown" style="display: none; position: absolute; top: 55px; right: 0; width: 280px; background: white; border-radius: 12px; box-shadow: 0 15px 30px rgba(0,0,0,0.15); z-index: 1000; padding: 20px; border: 1px solid #f1f5f9;">
+            <h4 style="margin: 0 0 15px 0; color: #4f46e5; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px; font-size: 0.9rem;">THREAT ANALYSIS</h4>
+            
+            {% if rate > 70 %}
+                {% set rate_level = 'high' %}
+            {% elif rate > 40 %}
+                {% set rate_level = 'medium' %}
+            {% else %}
+                {% set rate_level = 'low' %}
+            {% endif %}
+
+            <div style="background: #f8fafc; padding: 12px; border-radius: 10px; margin-bottom: 15px;">
+                <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">SPAM DETECTION RATE</p>
+                <h3 class="rate-value rate-{{ rate_level }}">{{ rate }}%</h3>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+function toggleProfileMenu() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+    }
+}
+
+// Close dropdown if clicking outside
+window.onclick = function(event) {
+    // Ensure we don't close the menu if the click is inside the container that opens it
+    if (!event.target.closest('.profile-menu-container')) {
+        const dropdown = document.getElementById('profileDropdown');
+        if (dropdown) {
+            dropdown.style.display = 'none';
+        }
+    }
+}
+</script>
+            <div class="email-section">
+                <h3>Analyze Email</h3>
+                <p>Paste the content of the email below to check for spam.</p>
+                
+               <form id="spamForm" action="{{ url_for('predict') }}" method="POST">
+    <textarea id="emailText" name="emailContent" placeholder="Paste email content here..." required></textarea>
+    
+    <button type="submit" class="btn-analyze" id="analyzeBtn">
+        <span class="btn-text">Check for Spam</span>
+        <div class="spinner" id="loadingSpinner"></div>
+    </button>
+                 </form>
+            </div>
+
+            {% if display_label %}
+            <div class="result-container" style="margin-top: 30px; animation: slideUp 0.5s ease-out;">
+                {% set result_level = 'spam' if score > 50 else 'safe' %}
+                <div class="scan-result-card scan-result-{{ result_level }}">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                        <h3 class="scan-result-title">
+                            <i class="fas {{ icon }}"></i>
+                            {{ display_label }}
+                        </h3>
+                        <span class="scan-result-score">{{ score }}% <small>THREAT</small></span>
+                    </div>
+
+                    <p style="color: #475569; margin: 0; line-height: 1.6;">
+                        {{ description }}
+                    </p>
+
+                    <div class="bar-bg" style="margin-top: 20px;">
+                        <div class="bar-fill"
+                             style="width: {{ score }}%; background-color: {% if score > 50 %}#ef4444{% else %}#10b981{% endif %};">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </main>
+
+   <script>
+    // --- Page Loader ---
+    window.addEventListener("load", function() {
+        setTimeout(() => {
+            document.getElementById("loader-wrapper").classList.add("loader-hidden");
+        }, 600);
+    });
+
+    // --- Form Submission Spinner ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const spamForm = document.getElementById('spamForm');
+        if (spamForm) {
+            spamForm.addEventListener('submit', function() {
+                document.querySelector('.btn-text').style.display = 'none';
+                document.getElementById('loadingSpinner').style.display = 'block';
+                document.getElementById('analyzeBtn').disabled = true;
+            });
+        }
+    });
+
+    // --- Profile Dropdown Menu ---
+    // Note: The toggleProfileMenu() and window.onclick() functions are now
+    // consolidated in the <script> block after the header. This script block
+    // is kept for the loader and form submission logic.
+</script>
+</body>
+</html>

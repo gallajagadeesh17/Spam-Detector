@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spam Detector | AI-Powered Security</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-page">
+
+    <div id="loader-wrapper">
+        <div class="loader-container">
+            <div class="cyber-spinner"></div>
+            <div class="loading-text">
+                <span>S</span><span>C</span><span>A</span><span>N</span><span>N</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <h2>Verify Your Identity</h2>
+        <p>A 6-digit security code has been dispatched to: <br>
+           <span style="color: #4f46e5; font-weight: 700;">
+               {{ session.get('reset_email', 'your registered account') }}
+           </span>
+        </p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form action="{{ url_for('verify_otp') }}" method="POST">
+            <input type="text" name="otp" placeholder="Enter Code" maxlength="6" required 
+                   style="text-align: center; letter-spacing: 12px; font-size: 24px; border: 2px solid #e2e8f0; border-radius: 12px; width: 100%;">
+            <button type="submit" class="btn-login" style="margin-top: 20px;">Verify & Continue</button>
+        </form>
+        
+        <div style="margin-top: 15px;">
+            <a href="{{ url_for('resend_otp') }}" style="font-size: 0.8rem; color: #94a3b8;">Resend Code</a>
+        </div>
+    </div>
+<script>
+window.addEventListener("load", function() {
+    setTimeout(() => {
+        document.getElementById("loader-wrapper").classList.add("loader-hidden");
+    }, 600);
+});
+</script>
+</body>
+</html>
