@@ -323,7 +323,7 @@ EMAIL_PASSWORD=your_app_password
 
 # 👨‍💻 Developer
 
-## Jagadeesh Galla
+## Galla jagadeesh
 
 **Aspiring AI & Generative AI Engineer**
 
@@ -339,7 +339,7 @@ Building intelligent AI applications using
 ### GitHub
 
 https://github.com/gallajagadeesh17
-mmm
+
 ---
 
 <div align="center">
